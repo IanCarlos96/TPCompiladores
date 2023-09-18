@@ -55,21 +55,6 @@ public class Lexer {
         words = new Hashtable();
         top = new Env();
         
-        /*
-        System.out.println("Teste");
-        try {
-            char test;
-            do{
-                test = (char)buffer.read();
-                System.out.print(test);
-            } while(test != (char)-1);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(Lexer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println("-------------------------------");
-        */        
-
         inserePalavrasReservadas();
         try {
             Token readed;
@@ -77,6 +62,7 @@ public class Lexer {
                 readed = scan();
                 if(readed.tag != EOF){
                     top.put(readed, readed.tag);
+                    System.out.println(readed.toString());
                 }
                 //words.put(readed, readed.getTag());
             } while (readed != null && readed.tag != EOF);

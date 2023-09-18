@@ -29,7 +29,8 @@ public class main {
         try(FileReader fr = new FileReader(file)){
             Lexer.setFile(fr);
             Lexer.analiseLexica();
-            Utils.printTabelaSimbolos(Lexer.top);
+            //O print é feito fora de ordem, então não chamo mais o print da tabela diretamente.
+            //Utils.printTabelaSimbolos(Lexer.top);
         }catch(Exception ex){
             System.out.println("["+ex.getMessage()+"]");
         }
