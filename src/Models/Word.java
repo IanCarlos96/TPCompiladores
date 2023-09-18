@@ -28,6 +28,14 @@ public class Word extends Token{
     public static final Word div = new Word ("/", Tag.DIV);
     public static final Word comment = new Word ("//", Tag.COMMENT);
     
+    public static final Word commentStart = new Word ("/*", Tag.COMMENTSTART);
+    public static final Word commentEnd = new Word ("*/", Tag.COMMENTEND);
+    public static final Word parAbre = new Word ("(", Tag.PARABRE);
+    public static final Word parFecha = new Word (")", Tag.PARFECHA);
+    public static final Word chaveAbre = new Word ("{", Tag.CHAVEABRE);
+    public static final Word chaveFecha = new Word ("}", Tag.CHAVEFECHA);
+    public static final Word pontoVirgula = new Word (";", Tag.CHAVEFECHA);
+    
     @Override
     public String toString() {
         return "Word{" + "lexema=" + lexema + '}';

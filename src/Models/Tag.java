@@ -44,7 +44,14 @@ public class Tag {
         MENOS = 45,
         MULT = 42,
         DIV = 47,
-        COMMENT = 282;
+        COMMENT = 282,
+        COMMENTSTART = 283,
+        COMMENTEND = 284,
+        PARABRE = 40,
+        PARFECHA = 41,
+        CHAVEABRE = 123,
+        CHAVEFECHA = 125,
+        PONTOVIRGULA = 59;
         
             
     public Tag(int tag) {

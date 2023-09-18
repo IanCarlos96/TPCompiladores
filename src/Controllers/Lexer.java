@@ -178,20 +178,48 @@ public class Lexer {
             case '/':
                 if (readch('/')) {
                     return Word.comment;
-                } else {
+                } else if (readch('*')) {
+                    return Word.commentStart;
+                }else {
                     return Word.div;
                 }
             case '*':
-                return Word.mult;
-
+                if (readch('/')){
+                    return Word.commentEnd;
+                } else {
+                    return Word.mult;
+                }
+            case '(':
+                return Word.parAbre;
+            case ')':
+                return Word.parFecha;
+            case '{':
+                return Word.chaveAbre;
+            case '}':
+                return Word.chaveFecha;
+            case ';':
+                return Word.pontoVirgula;
         }
         //Números
         if (Character.isDigit(ch)) {
+            boolean dotUsed = false;
+            int casas = 1;
             int value = 0;
-            do {
-                value = 10 * value + Character.digit(ch, 10);
-                readch();
-            } while (Character.isDigit(ch));
+            if(ch == 0){
+                return new Num(value);
+            } else {
+                do {
+                    if(!dotUsed){
+                        value = 10 * value + Character.digit(ch, 10);
+                    } else if(ch == '.'){
+                        dotUsed = true;
+                    } else{
+                        value = (int) ((int)value + (Math.pow(10, (-1)*casas) * Character.digit(ch,10)));
+                    }
+                    readch();
+                } while (Character.isDigit(ch) || (ch =='.' && !dotUsed));
+                
+            }
             return new Num(value);
         }
         //Identificadores
