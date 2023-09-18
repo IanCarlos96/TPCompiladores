@@ -1,0 +1,4 @@
+{
+int variavel1;
+write(variavel1);
+}
