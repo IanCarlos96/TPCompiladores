@@ -47,6 +47,7 @@ public class Tag {
         COMMENT = 282,
         COMMENTSTART = 283,
         COMMENTEND = 284,
+        COMMENTBLOCK = 285,
         PARABRE = 40,
         PARFECHA = 41,
         CHAVEABRE = 123,

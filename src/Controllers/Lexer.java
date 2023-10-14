@@ -12,6 +12,7 @@ import Models.Word;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,16 +27,16 @@ public class Lexer {
     private static BufferedReader buffer;
 
     //words serve pra agrupar lexema e tag.
-    private static Hashtable words;
+    private static Hashtable<String, Word> words;
+    private static ArrayList<Token> tokenList;
     public static Env top;
-    
 
     private static char ch;
-    private static char estado;
+    //private static char estado;
     private static int line;
 
     //Rever esse estadoIni = ' '
-    private static final char estadoIni = ' ';
+    //private static final char estadoIni = ' ';
     private static final int EOF = (char) -1;
 
     public static FileReader getFile() {
@@ -48,13 +49,21 @@ public class Lexer {
         buffer = new BufferedReader(file);
     }
 
+    public Hashtable<String, Word> getWords() {
+        return words;
+    }
+
+    public ArrayList<Token> getTokenList() {
+        return tokenList;
+    }
+
     public static void analiseLexica() {
         line = 1;
-        
+
         // a words serve pra transformar o lexema em token
         words = new Hashtable();
-        top = new Env();
-        
+        tokenList = new ArrayList();
+
         /*
         System.out.println("Teste");
         try {
@@ -68,17 +77,17 @@ public class Lexer {
             Logger.getLogger(Lexer.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println("-------------------------------");
-        */        
-
+         */
         inserePalavrasReservadas();
         try {
             Token readed;
             do {
                 readed = scan();
-                if(readed.tag != EOF){
+                if (readed.tag != EOF) {
                     top.put(readed, readed.tag);
                 }
                 //words.put(readed, readed.getTag());
+                tokenList.add(readed);
             } while (readed != null && readed.tag != EOF);
         } catch (IOException ex) {
             //Logger.getLogger(Lexer.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,14 +126,14 @@ public class Lexer {
         reserve(new Word("type", Tag.TYPE));
         reserve(new Word("int", Tag.INT));
         reserve(new Word("else", Tag.ELSE));
-        
+
     }
 
     private static Token scan() throws IOException {
         //Desconsidera delimitadores na entrada
-        //for (;; readch()) {
-        while(true){
-            readch();
+        for (;; readch()) {
+            //while(true){
+            //    readch();
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b') {
                 continue;
             } else if (ch == '\n') {
@@ -133,6 +142,9 @@ public class Lexer {
                 break;
             }
         }
+        
+        StringBuffer sb = new StringBuffer();
+        
         switch (ch) {
             //Operadores
             case '&':
@@ -176,13 +188,43 @@ public class Lexer {
             case '-':
                 return Word.menos;
             case '/':
-                if (readch('/')) {
+                readch();
+                if (ch == '*') {
+                    while (true) {
+                        readch();
+                        if (ch == '*') {
+                            readch();
+                            while (ch == '*') {
+                                sb.append(ch);
+                                readch();
+                            }
+                            if (ch == '/') {
+                                break;
+                            } else {
+                                sb.append('*');
+                            }
+                        }
+                        
+                        sb.append(ch);
+                    }
+                    String s = sb.toString();
+                    Word w = words.get(s);
+                    if (w != null) {
+                        return w;
+                    }
+                    w = new Word(s, Tag.COMMENTBLOCK);
+                    words.put(s, w);
+                    return w;
+                }else if(ch == '/') {
+                    while(ch != '\n'){
+                        readch();
+                    }
                     return Word.comment;
-                } else if (readch('*')) {
-                    return Word.commentStart;
                 }else {
                     return Word.div;
                 }
+    
+
             case '*':
                 if (readch('/')){
                     return Word.commentEnd;
@@ -201,46 +243,49 @@ public class Lexer {
                 return Word.pontoVirgula;
         }
         //Números
-        if (Character.isDigit(ch)) {
+        if (Character.isDigit (ch) 
+        ) {
             boolean dotUsed = false;
-            int casas = 1;
-            int value = 0;
-            if(ch == 0){
-                return new Num(value);
-            } else {
-                do {
-                    if(!dotUsed){
-                        value = 10 * value + Character.digit(ch, 10);
-                    } else if(ch == '.'){
-                        dotUsed = true;
-                    } else{
-                        value = (int) ((int)value + (Math.pow(10, (-1)*casas) * Character.digit(ch,10)));
-                    }
-                    readch();
-                } while (Character.isDigit(ch) || (ch =='.' && !dotUsed));
-                
-            }
+        int casas = 1;
+        int value = 0;
+        if (ch == 0) {
             return new Num(value);
-        }
-        //Identificadores
-        if (Character.isLetter(ch)) {
-            StringBuffer sb = new StringBuffer();
+        } else {
             do {
-                sb.append(ch);
+                if (!dotUsed) {
+                    value = 10 * value + Character.digit(ch, 10);
+                } else if (ch == '.') {
+                    dotUsed = true;
+                } else {
+                    value = (int) ((int) value + (Math.pow(10, (-1) * casas) * Character.digit(ch, 10)));
+                }
                 readch();
-            } while (Character.isLetterOrDigit(ch));
-            String s = sb.toString();
-            Word w = (Word) words.get(s);
-            if (w != null) {
-                return w; //palavra já existe na HashTable
-            }
-            w = new Word(s, Tag.ID);
-            words.put(s, w);
-            return w;
+            } while (Character.isDigit(ch) || (ch == '.' && !dotUsed));
+
         }
-        //Caracteres não especificados
-        Token t = new Token(ch);
-        ch = ' ';
-        return t;
+        return new Num(value);
     }
+    //Identificadores
+
+    if (Character.isLetter (ch) 
+        ) {
+            sb = new StringBuffer();
+        do {
+            sb.append(ch);
+            readch();
+        } while (Character.isLetterOrDigit(ch));
+        String s = sb.toString();
+        Word w = (Word) words.get(s);
+        if (w != null) {
+            return w; //palavra já existe na HashTable
+        }
+        w = new Word(s, Tag.ID);
+        words.put(s, w);
+        return w;
+    }
+    //Caracteres não especificados
+    Token t = new Token(ch);
+    ch  = ' ';
+    return t ;
+}
 }
