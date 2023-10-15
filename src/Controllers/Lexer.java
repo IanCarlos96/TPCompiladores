@@ -10,6 +10,7 @@ import Models.Tag;
 import Models.Token;
 import Models.Word;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,12 +25,11 @@ import java.util.logging.Logger;
 public class Lexer {
 
     private static FileReader file;
-    private static BufferedReader buffer;
 
     //words serve pra agrupar lexema e tag.
     private static Hashtable<String, Word> words;
     private static ArrayList<Token> tokenList;
-    public static Env top;
+    //public static Env top;
 
     private static char ch;
     //private static char estado;
@@ -43,17 +43,19 @@ public class Lexer {
         return file;
     }
 
-    public static void setFile(FileReader file) {
-        Lexer.file = file;
-        //Isso não devia estar aqui, but fds
-        buffer = new BufferedReader(file);
+    public static void setFile(String filename) {
+        try {
+            file = new FileReader(filename);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Lexer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public Hashtable<String, Word> getWords() {
+    public static Hashtable<String, Word> getWords() {
         return words;
     }
 
-    public ArrayList<Token> getTokenList() {
+    public static ArrayList<Token> getTokenList() {
         return tokenList;
     }
 
@@ -80,14 +82,19 @@ public class Lexer {
          */
         inserePalavrasReservadas();
         try {
+//            for (Token token = scan(); token.tag != 65535 && token.tag != EOF; token = scan()){
+//                tokenList.add(token);
+//            }
             Token readed;
             do {
                 readed = scan();
                 if (readed.tag != EOF) {
-                    top.put(readed, readed.tag);
+                    //top.put(readed, readed.tag);
+                    tokenList.add(readed);
+                    readch();
                 }
                 //words.put(readed, readed.getTag());
-                tokenList.add(readed);
+                
             } while (readed != null && readed.tag != EOF);
         } catch (IOException ex) {
             //Logger.getLogger(Lexer.class.getName()).log(Level.SEVERE, null, ex);
@@ -102,7 +109,7 @@ public class Lexer {
 
     private static void readch() {
         try {
-            ch = (char) buffer.read();
+            ch = (char) file.read();
         } catch (IOException ex) {
             Logger.getLogger(Lexer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -118,29 +125,33 @@ public class Lexer {
     }
 
     private static void inserePalavrasReservadas() {
-        reserve(new Word("if", Tag.IF));
-        reserve(new Word("class", Tag.ELSE));
+        
+        reserve(new Word("class", Tag.CLASS));
         reserve(new Word("program", Tag.PRG));
         reserve(new Word("begin", Tag.BEG));
         reserve(new Word("end", Tag.END));
         reserve(new Word("type", Tag.TYPE));
         reserve(new Word("int", Tag.INT));
+        reserve(new Word("string", Tag.STRING));
+        reserve(new Word("float", Tag.FLOAT));
+        reserve(new Word("if", Tag.IF));
         reserve(new Word("else", Tag.ELSE));
+        reserve(new Word("do", Tag.DO));
+        reserve(new Word("while", Tag.WHILE));
+        reserve(new Word("read", Tag.READ));
+        reserve(new Word("write", Tag.WRITE));
 
     }
 
     private static Token scan() throws IOException {
         //Desconsidera delimitadores na entrada
         for (;; readch()) {
-            //while(true){
-            //    readch();
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b') {
-                continue;
-            } else if (ch == '\n') {
-                line++; //conta linhas
-            } else {
-                break;
             }
+            else if (ch == '\n'){
+                line++; //conta linhas
+            }
+            else break;
         }
         
         StringBuffer sb = new StringBuffer();
@@ -240,6 +251,8 @@ public class Lexer {
             case '}':
                 return Word.chaveFecha;
             case ';':
+                String s = sb.toString();
+                System.out.println("S = ["+s+"]");
                 return Word.pontoVirgula;
         }
         //Números

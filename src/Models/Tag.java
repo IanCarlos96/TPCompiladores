@@ -30,10 +30,13 @@ public class Tag {
         READ = 269,
         WRITE = 270,
         //Operadores e pontuação
-        EQ = 288,
-        GE = 289,
-        LE = 290,
-        NE = 291,
+        EQ = 288, // ==
+        GE = 289, // >=
+        LE = 290, // <=
+        NE = 291, // !=
+        LT = 60, // <
+        GT = 62, // >
+        ASSIGN = 61, // =
         NUM = 278,
         ID = 279,
         AND = 280,
@@ -44,6 +47,8 @@ public class Tag {
         MENOS = 45,
         MULT = 42,
         DIV = 47,
+        NOT = 33,
+        
         COMMENT = 282,
         COMMENTSTART = 283,
         COMMENTEND = 284,
@@ -52,7 +57,13 @@ public class Tag {
         PARFECHA = 41,
         CHAVEABRE = 123,
         CHAVEFECHA = 125,
-        PONTOVIRGULA = 59;
+        PONTOVIRGULA = 59,
+        VIRGULA = 44,
+            
+        INTEGER_CONSTANT = 286,
+        LITERAL = 287,
+        REAL_CONSTANT = 288;
+            
         
             
     public Tag(int tag) {
