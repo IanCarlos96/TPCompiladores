@@ -26,7 +26,7 @@ public class main {
     public static void main(String[] args) {
         
         //Informar o nome do arquivo aqui
-        String filename = "./src/files/test1.txt";
+        String filename = "./src/files/test1_corrigido.txt";
         //System.out.println(System.getProperty("user.dir"));
         
         

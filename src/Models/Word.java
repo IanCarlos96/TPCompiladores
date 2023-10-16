@@ -34,7 +34,9 @@ public class Word extends Token{
     public static final Word parFecha = new Word (")", Tag.PARFECHA);
     public static final Word chaveAbre = new Word ("{", Tag.CHAVEABRE);
     public static final Word chaveFecha = new Word ("}", Tag.CHAVEFECHA);
-    public static final Word pontoVirgula = new Word (";", Tag.CHAVEFECHA);
+    public static final Word pontoVirgula = new Word (";", Tag.PONTOVIRGULA);
+    public static final Word aspas = new Word ("\"", Tag.ASPAS);
+    
     
     @Override
     public String toString() {
@@ -47,10 +49,9 @@ public class Word extends Token{
         this.tag = super.tag;
     }
     
-    /*
-    public Word(int tag) {
-        super(tag);
+    
+    public String getLexema(){
+        return this.lexema;
     }
-    */
     
 }

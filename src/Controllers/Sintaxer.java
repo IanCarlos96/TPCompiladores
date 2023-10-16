@@ -66,10 +66,16 @@ public class Sintaxer {
     // decl-list ::= decl ";" { decl ";"}
     private void decl_list() throws SintaticError {
         decl();
+        //getNextToken(Tag.PONTOVIRGULA);
         while (current.tag == Tag.PONTOVIRGULA) {
             getNextToken(Tag.PONTOVIRGULA);
-            decl();
+            if(current.tag == Tag.INT || current.tag == Tag.FLOAT || current.tag == Tag.STRING){
+                decl();
+            }
         }
+        //getNextToken(Tag.PONTOVIRGULA);
+        
+        
     }
 
     // decl ::= type ident-list
@@ -85,6 +91,7 @@ public class Sintaxer {
             identifiers.add(this.current);
         }
         getNextToken(Tag.ID);
+        //getNextToken(Tag.VIRGULA);
         while (current.tag == Tag.VIRGULA) {
             getNextToken(Tag.VIRGULA);
             if (this.current.tag == Tag.ID) {
@@ -213,9 +220,14 @@ public class Sintaxer {
         getNextToken(Tag.PARFECHA);
     }
 
-    // writable ::= simple-expr
+    // writable ::=  simple-expr | literal
     private void writable() throws SintaticError {
-        simple_expr();
+        if(current.tag == Tag.LITERAL){
+            getNextToken(Tag.LITERAL);
+        } else {
+            simple_expr();
+        }
+        
     }
 
     // expression ::= simple-expr | simple-expr relop simple-expr
@@ -358,8 +370,8 @@ public class Sintaxer {
     private void constant() throws SintaticError {
         // Implemente a lógica para verificar e consumir constantes.
         switch (current.tag) {
-            case Tag.INTEGER_CONSTANT:
-                getNextToken(Tag.INTEGER_CONSTANT);
+            case Tag.INTEGER_CONSTANT, Tag.INT:
+                getNextToken(Tag.INT);
                 break;
             case Tag.LITERAL:
                 getNextToken(Tag.LITERAL);
@@ -368,7 +380,7 @@ public class Sintaxer {
                 getNextToken(Tag.REAL_CONSTANT);
                 break;
             default:
-                throw new SintaticError(this.current + " is an Invalid Constant");
+            //    throw new SintaticError(this.current + " is an Invalid Constant");
         }
     }
 

@@ -8,21 +8,16 @@ package Models;
  *
  * @author Ian Silva
  */
-public class Num extends Token{
-    
-    public final int value;
-    public final int tag;
+public class Float extends Token {
 
-    public Num(int value) {
-        super(Tag.INT);
+    public final float value;
+
+    public Float(float value) {
+        super(Tag.FLOAT);
         this.value = value;
-        tag = super.tag;
     }
-    
-    @Override
+
     public String toString() {
-        return "Num{" + "value=" + value + '}';
+        return "" + value;
     }
-    
-    
 }

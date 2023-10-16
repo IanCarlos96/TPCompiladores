@@ -59,10 +59,11 @@ public class Tag {
         CHAVEFECHA = 125,
         PONTOVIRGULA = 59,
         VIRGULA = 44,
+        ASPAS = 34,
             
         INTEGER_CONSTANT = 286,
         LITERAL = 287,
-        REAL_CONSTANT = 288;
+        REAL_CONSTANT = 300;
             
         
             
