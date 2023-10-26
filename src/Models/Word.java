@@ -14,6 +14,7 @@ public class Word extends Token{
     public final int tag;
 
     //Palavras Reservadas
+    /*
     public static final Word and = new Word ("&&", Tag.AND);
     public static final Word or = new Word ("||", Tag.OR);
     public static final Word eq = new Word ("==", Tag.EQ);
@@ -29,14 +30,14 @@ public class Word extends Token{
     public static final Word comment = new Word ("//", Tag.COMMENT);
     
     public static final Word commentStart = new Word ("/*", Tag.COMMENTSTART);
-    public static final Word commentEnd = new Word ("*/", Tag.COMMENTEND);
+    public static final Word commentEnd = new Word ("* /", Tag.COMMENTEND);
     public static final Word parAbre = new Word ("(", Tag.PARABRE);
     public static final Word parFecha = new Word (")", Tag.PARFECHA);
     public static final Word chaveAbre = new Word ("{", Tag.CHAVEABRE);
     public static final Word chaveFecha = new Word ("}", Tag.CHAVEFECHA);
     public static final Word pontoVirgula = new Word (";", Tag.PONTOVIRGULA);
     public static final Word aspas = new Word ("\"", Tag.ASPAS);
-    
+    */
     
     @Override
     public String toString() {
@@ -49,6 +50,11 @@ public class Word extends Token{
         this.tag = super.tag;
     }
     
+    public Word(String lexema, int tag, int line) {
+        super(tag, line);
+        this.lexema = lexema;
+        this.tag = super.tag;
+    }
     
     public String getLexema(){
         return this.lexema;

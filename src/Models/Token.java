@@ -11,15 +11,22 @@ package Models;
 public class Token {
     
     public final int tag;
+    public int line;
 
     public Token(int tag) {
         this.tag = tag;
     }
 
+    public Token(int tag, int line) {
+        this.tag = tag;
+        this.line = line;
+    }
+
     @Override
     public String toString() {
-        return "Token{" + "tag=" + tag + '}';
+        return "Token{" + "tag=" + tag + ", line=" + line + '}';
     }
+
     
     
     

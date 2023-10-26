@@ -60,32 +60,18 @@ public class Lexer {
         return tokenList;
     }
 
-    public static void analiseLexica() {
+    public static void analiseLexica() throws IOException {
         line = 1;
 
         // a words serve pra transformar o lexema em token
         words = new Hashtable();
         tokenList = new ArrayList();
 
-        /*
-        System.out.println("Teste");
-        try {
-            char test;
-            do{
-                test = (char)buffer.read();
-                System.out.print(test);
-            } while(test != (char)-1);
-            
-        } catch (IOException ex) {
-            Logger.getLogger(Lexer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        System.out.println("-------------------------------");
-         */
+        
         inserePalavrasReservadas();
+        
+        /*Jeito que funcionava na primeira entrega 2
         try {
-//            for (Token token = scan(); token.tag != 65535 && token.tag != EOF; token = scan()){
-//                tokenList.add(token);
-//            }
             Token readed;
             do {
                 readed = scan();
@@ -102,21 +88,22 @@ public class Lexer {
             System.out.println("Erro na linha " + line);
             System.out.println("\t[" + ex.getMessage() + "]");
         }
+        */
+        
+        for (Token token = scan(); token.tag != 65535 && token.tag != EOF; token = scan()){
+            tokenList.add(token);
+        }
     }
 
     public static void reserve(Word w) {
         words.put(w.lexema, w);
     }
 
-    private static void readch() {
-        try {
-            ch = (char) file.read();
-        } catch (IOException ex) {
-            Logger.getLogger(Lexer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private static void readch() throws IOException {
+        ch = (char) file.read();
     }
 
-    private static boolean readch(char c) {
+    private static boolean readch(char c) throws IOException {
         readch();
         if (ch != c) {
             return false;
@@ -161,44 +148,46 @@ public class Lexer {
             //Operadores
             case '&':
                 if (readch('&')) {
-                    return Word.and;
+                    return new Word("&&", Tag.AND, line);
                 } else {
                     return new Token('&');
                 }
             case '|':
                 if (readch('|')) {
-                    return Word.or;
+                    return new Word("||", Tag.OR, line);
                 } else {
                     return new Token('|');
                 }
             case '=':
                 if (readch('=')) {
-                    return Word.eq;
+                    return new Word("==", Tag.EQ, line);
                 } else {
-                    return new Token('=');
+                    return new Word ("=", Tag.ASSIGN, line);
                 }
             case '<':
                 if (readch('=')) {
-                    return Word.le;
+                    return new Word("<=", Tag.LE, line);
                 } else {
                     return new Token('<');
                 }
             case '>':
                 if (readch('=')) {
-                    return Word.ge;
+                    return new Word(">=", Tag.GE, line);
                 } else {
                     return new Token('>');
                 }
             case '!':
                 if (readch('=')) {
-                    return Word.ne;
+                    return new Word("!=", Tag.NE, line);
                 } else {
                     return new Token('!');
                 }
             case '+':
-                return Word.mais;
+                readch();
+                return new Word("+", Tag.MAIS, line);
             case '-':
-                return Word.menos;
+                readch();
+                return new Word("-", Tag.MENOS, line);
             case '/':
                 readch();
                 if (ch == '*') {
@@ -224,50 +213,57 @@ public class Lexer {
                     if (w != null) {
                         return w;
                     }
-                    w = new Word(s, Tag.COMMENTBLOCK);
+                    w = new Word(s, Tag.COMMENTBLOCK, line);
                     words.put(s, w);
                     return w;
                 } else if (ch == '/') {
                     while (ch != '\n') {
                         readch();
                     }
-                    return Word.comment;
+                    return new Word("//", Tag.COMMENT, line);
                 } else {
-                    return Word.div;
+                    readch(); //provisório?
+                    return new Word("/", Tag.DIV, line);
                 }
 
             case '*':
                 if (readch('/')) {
-                    return Word.commentEnd;
+                    return new Word("*/", Tag.COMMENTEND, line);
                 } else {
-                    return Word.mult;
+                    return new Word("*", Tag.MULT, line);
                 }
             case '(':
-                return Word.parAbre;
+                readch();
+                return new Word("(", Tag.PARABRE, line);
             case ')':
-                return Word.parFecha;
+                readch();
+                return new Word(")", Tag.PARFECHA, line);
             case '{':
-                return Word.chaveAbre;
+                readch();
+                return new Word("{", Tag.CHAVEABRE, line);
             case '}':
-                return Word.chaveFecha;
+                readch();
+                return new Word("}", Tag.CHAVEFECHA, line);
             case ';':
-                String s = sb.toString();
-                return Word.pontoVirgula;
+                readch();
+                //String s = sb.toString();
+                return new Word(";", Tag.PONTOVIRGULA, line);
             case '"':
                 readch();
                 //sb = new StringBuffer();
                 while (ch != '"') {
-                    readch();
                     if (ch != '"') {
                         sb.append(ch);
                     }
+                    readch();
                 }
                 Word w = words.get(sb.toString());
                 if (w != null) {
                     return w;
                 }
-                w = new Word(sb.toString(), Tag.LITERAL);
+                w = new Word(sb.toString(), Tag.LITERAL, line);
                 words.put(sb.toString(), w);
+                readch();
                 return w;
         }
         //Números
@@ -306,7 +302,7 @@ public class Lexer {
             if (w != null) {
                 return w; //palavra já existe na HashTable
             }
-            w = new Word(s, Tag.ID);
+            w = new Word(s, Tag.ID, line);
             words.put(s, w);
             return w;
         }

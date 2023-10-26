@@ -33,7 +33,7 @@ public class Sintaxer {
             this.current = tokenList.get(tokenIndex);
         }
         else {
-            throw new SintaticError("Expected tag " + expected + ", got " + Character.toString((char)this.current.tag));
+            throw new SintaticError("Expected tag " + expected + ", got " + Character.toString((char)this.current.tag) + " at line "+this.current.line);
         }
     }
     
@@ -115,7 +115,7 @@ public class Sintaxer {
                 getNextToken(Tag.STRING);
                 return Tag.STRING;
             default:
-                throw new SintaticError("Expected Type (int, float or string), got " + this.current);
+                throw new SintaticError("Expected Type (int, float or string), got " + this.current + " at line "+this.current.line);
         }
     }
 
@@ -154,7 +154,7 @@ public class Sintaxer {
                 write_stmt();
                 break;
             default:
-                throw new SintaticError(this.current + " is an Invalid Statement Start");
+                throw new SintaticError(this.current + " is an Invalid Statement Start" + " at line "+this.current.line);
         }
     }
 
@@ -239,7 +239,7 @@ public class Sintaxer {
                 simple_expr();
                 break;
             default: 
-                throw new SintaticError(this.current + " is an Invalid Expression Operator");
+            //    throw new SintaticError(this.current + " is an Invalid Expression Operator" + " at line "+this.current.line);
         }
     }
 
@@ -302,7 +302,7 @@ public class Sintaxer {
                 getNextToken(Tag.PARFECHA);
                 break;
             default: 
-                throw new SintaticError(this.current + " is an Invalid Factor");
+                throw new SintaticError(this.current + " is an Invalid Factor" + " at line "+this.current.line);
         }
     }
 
@@ -328,7 +328,7 @@ public class Sintaxer {
                 getNextToken(Tag.NE);
                 break;
             default:
-                throw new SintaticError(this.current + " is an Invalid Relational Operator");
+                throw new SintaticError(this.current + " is an Invalid Relational Operator" + " at line "+this.current.line);
         }
     }
 
@@ -345,7 +345,7 @@ public class Sintaxer {
                 getNextToken(Tag.OR);
                 break;
             default: 
-                throw new SintaticError(this.current + " is an Invalid Add Operator");
+                throw new SintaticError(this.current + " is an Invalid Add Operator" + " at line "+this.current.line);
         }
     }
 
@@ -362,7 +362,7 @@ public class Sintaxer {
                 getNextToken(Tag.AND);
                 break;
             default: 
-                throw new SintaticError(this.current + " is an Invalid Mul Operator");
+                throw new SintaticError(this.current + " is an Invalid Mul Operator" + " at line "+this.current.line);
         }
     }
 
