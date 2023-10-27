@@ -25,12 +25,19 @@ public class main {
      */
     public static void main(String[] args) {
         
-        //Informar o nome do arquivo aqui
-        String filename = "./src/files/test1_corrigido.txt";
+        //Informar o nome do arquivo aqui ou por argumento
+        String filepath = "./src/files/";
+        String filename = "";
+        if(args.length == 0){
+            filename = "test1_corrigido.txt";
+        } else {
+            filename = args[0];
+        }
+        
         //System.out.println(System.getProperty("user.dir"));
+        String fullFile = filepath+filename;
         
-        
-        File file = new File(filename);
+        File file = new File(fullFile);
         try(FileReader fr = new FileReader(file)){
             Lexer.setFile(file.getAbsolutePath());
             Lexer.analiseLexica();

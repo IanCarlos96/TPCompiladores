@@ -222,7 +222,7 @@ public class Lexer {
                     }
                     return new Word("//", Tag.COMMENT, line);
                 } else {
-                    readch(); //provisório?
+                    //readch(); //provisório?
                     return new Word("/", Tag.DIV, line);
                 }
 

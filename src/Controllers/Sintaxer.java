@@ -30,7 +30,9 @@ public class Sintaxer {
     private void getNextToken(int expected) throws SintaticError {
         if (this.current.tag == expected) {
             this.tokenIndex ++;
-            this.current = tokenList.get(tokenIndex);
+            if(this.tokenIndex < tokenList.size()){
+                this.current = tokenList.get(tokenIndex);
+            }
         }
         else {
             throw new SintaticError("Expected tag " + expected + ", got " + Character.toString((char)this.current.tag) + " at line "+this.current.line);
@@ -152,6 +154,8 @@ public class Sintaxer {
                 break;
             case Tag.WRITE:
                 write_stmt();
+                break;
+            case Tag.CHAVEFECHA: //teste
                 break;
             default:
                 throw new SintaticError(this.current + " is an Invalid Statement Start" + " at line "+this.current.line);
@@ -380,7 +384,7 @@ public class Sintaxer {
                 getNextToken(Tag.REAL_CONSTANT);
                 break;
             default:
-            //    throw new SintaticError(this.current + " is an Invalid Constant");
+                throw new SintaticError(this.current + " is an Invalid Constant");
         }
     }
 
