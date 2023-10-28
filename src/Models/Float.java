@@ -16,6 +16,11 @@ public class Float extends Token {
         super(Tag.FLOAT);
         this.value = value;
     }
+    
+    public Float(float value, int line){
+        super(Tag.FLOAT, line);
+        this.value = value;
+    }
 
     public String toString() {
         return "" + value;

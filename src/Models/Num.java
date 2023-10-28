@@ -19,6 +19,12 @@ public class Num extends Token{
         tag = super.tag;
     }
     
+    public Num(int value, int line){
+        super(Tag.INT, line);
+        this.value = value;
+        tag = super.tag;
+    }
+    
     @Override
     public String toString() {
         return "Num{" + "value=" + value + '}';

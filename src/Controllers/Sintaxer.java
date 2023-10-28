@@ -28,6 +28,12 @@ public class Sintaxer {
     }
 
     private void getNextToken(int expected) throws SintaticError {
+        if (this.current.tag == Tag.COMMENTBLOCK){
+            this.tokenIndex ++;
+            if(this.tokenIndex < tokenList.size()){
+                this.current = tokenList.get(tokenIndex);
+            }
+        }
         if (this.current.tag == expected) {
             this.tokenIndex ++;
             if(this.tokenIndex < tokenList.size()){
@@ -48,9 +54,10 @@ public class Sintaxer {
         for(int index = 0; index < this.tokenList.size() && finded == false; index++){
             this.current = this.tokenList.get(index);
             if(this.current.tag == 0){
-                this.current = this.tokenList.get(index);
+            //    this.current = this.tokenList.get(index);
             } else {
                 this.tokenIndex = index;
+                this.current = this.tokenList.get(index);
                 finded = true;
             }
         }
@@ -267,15 +274,15 @@ public class Sintaxer {
     private void term() throws SintaticError {
         factor_a();
         recursive_term();
-//        while (current.tag == Tag.MUL_OP) {
+//        while (current.tag == Tag.AND) {
 //            mulop();
 //            factor_a();
-//        };
+//        }
     }
     
     private void recursive_term() throws SintaticError{
         switch(current.tag){
-            case Tag.MULT, Tag.DIV, Tag.OR:
+            case Tag.MULT, Tag.DIV, Tag.AND:
                 mulop();
                 factor_a();
                 recursive_term();
@@ -291,13 +298,13 @@ public class Sintaxer {
         factor();
     }
 
-    // factor ::= identifier | constant | "(" expression ")"
+    // factor ::= identifier | constant | literal | "(" expression ")"
     private void factor() throws SintaticError {
         switch(current.tag){
             case Tag.ID:
                 getNextToken(Tag.ID);
                 break;
-            case Tag.INT, Tag.FLOAT, Tag.STRING:
+            case Tag.INT, Tag.FLOAT, Tag.STRING, Tag.LITERAL:
                 constant();
                 break;
             case Tag.PARABRE:

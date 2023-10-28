@@ -29,7 +29,7 @@ public class main {
         String filepath = "./src/files/";
         String filename = "";
         if(args.length == 0){
-            filename = "test1_corrigido.txt";
+            filename = "test6.txt";
         } else {
             filename = args[0];
         }
@@ -39,6 +39,7 @@ public class main {
         
         File file = new File(fullFile);
         try(FileReader fr = new FileReader(file)){
+            System.out.println("Iniciando análise léxica do arquivo "+fullFile);
             Lexer.setFile(file.getAbsolutePath());
             Lexer.analiseLexica();
             ArrayList<Token> token_list = Lexer.getTokenList();

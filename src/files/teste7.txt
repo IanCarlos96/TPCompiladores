@@ -1,0 +1,13 @@
+class Test7
+int a, b;
+{
+    write("Digite o primeiro número");
+    read(a);
+    write("Digite o segundo numero número");
+    read(b);
+    
+    c = a + b;
+    texto = "a soma dos números é "+c;
+    write(texto);
+}
+

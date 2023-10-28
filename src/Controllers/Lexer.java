@@ -60,7 +60,7 @@ public class Lexer {
         return tokenList;
     }
 
-    public static void analiseLexica() throws IOException {
+    public static void analiseLexica() throws IOException, Exception {
         line = 1;
 
         // a words serve pra transformar o lexema em token
@@ -91,7 +91,10 @@ public class Lexer {
         */
         
         for (Token token = scan(); token.tag != 65535 && token.tag != EOF; token = scan()){
-            tokenList.add(token);
+            if(token.tag != Tag.COMMENTBLOCK && token.tag != Tag.COMMENT){
+                tokenList.add(token);
+            }
+            
         }
     }
 
@@ -131,7 +134,7 @@ public class Lexer {
 
     }
 
-    private static Token scan() throws IOException {
+    private static Token scan() throws IOException, Exception {
         //Desconsidera delimitadores na entrada
         for (;; readch()) {
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b') {
@@ -168,13 +171,13 @@ public class Lexer {
                 if (readch('=')) {
                     return new Word("<=", Tag.LE, line);
                 } else {
-                    return new Token('<');
+                    return new Word("<", Tag.LT,line);//Token('<');
                 }
             case '>':
                 if (readch('=')) {
                     return new Word(">=", Tag.GE, line);
                 } else {
-                    return new Token('>');
+                    return new Word(">", Tag.GT, line);//Token('>');
                 }
             case '!':
                 if (readch('=')) {
@@ -200,11 +203,13 @@ public class Lexer {
                                 readch();
                             }
                             if (ch == '/') {
+                                readch(); // Teste?
                                 break;
                             } else {
                                 sb.append('*');
                             }
-                        }
+                        } if((int)ch==65535)
+                            throw new Exception("Um comentário não foi fechado");
 
                         sb.append(ch);
                     }
@@ -222,10 +227,9 @@ public class Lexer {
                     }
                     return new Word("//", Tag.COMMENT, line);
                 } else {
-                    //readch(); //provisório?
                     return new Word("/", Tag.DIV, line);
                 }
-
+                
             case '*':
                 if (readch('/')) {
                     return new Word("*/", Tag.COMMENTEND, line);
@@ -256,6 +260,8 @@ public class Lexer {
                         sb.append(ch);
                     }
                     readch();
+                    if(ch == '\n')
+                        throw new Exception("Um literal não foi fechado");
                 }
                 Word w = words.get(sb.toString());
                 if (w != null) {
@@ -274,7 +280,7 @@ public class Lexer {
                 readch();
             } while (Character.isDigit(ch));
             if (ch != '.') {
-                return new Num(value);
+                return new Num(value, line);
             }
 
             float aux = 10;
@@ -287,7 +293,7 @@ public class Lexer {
                 float_value += (Character.digit(ch, 10) / 10.0);
                 aux = aux * 10;
             }
-            return new Float(float_value);
+            return new Float(float_value, line);
         }
 
         //Identificadores
@@ -296,18 +302,19 @@ public class Lexer {
             do {
                 sb.append(ch);
                 readch();
-            } while (Character.isLetterOrDigit(ch));
+            } while (Character.isLetterOrDigit(ch) || ch == '_');
             String s = sb.toString();
             Word w = (Word) words.get(s);
             if (w != null) {
-                return w; //palavra já existe na HashTable
+                return new Word(w.lexema, w.tag, line);
+                //return w; //palavra já existe na HashTable
             }
             w = new Word(s, Tag.ID, line);
             words.put(s, w);
             return w;
         }
         //Caracteres não especificados
-        Token t = new Token(ch);
+        Token t = new Token(ch, line);
         ch = ' ';
         return t;
     }
