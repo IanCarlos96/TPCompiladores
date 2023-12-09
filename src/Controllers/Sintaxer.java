@@ -198,7 +198,7 @@ public class Sintaxer {
         getNextToken(Tag.PARFECHA);
         getNextToken(Tag.CHAVEABRE);
         stmt_list();
-        //getNextToken(Tag.CHAVEFECHA);
+        getNextToken(Tag.CHAVEFECHA);
         if (current.tag == Tag.ELSE) {
             getNextToken(Tag.ELSE);
             getNextToken(Tag.CHAVEABRE);
@@ -307,7 +307,9 @@ public class Sintaxer {
                     } else if (Utils.typeNumeric(type) && Utils.typeNumeric(typeAnt) && type == typeAnt){
                         type = recursive_simple_expr(type);
                         break;
-                    } else {
+                    } else if(Utils.typeNumeric(type) && Utils.typeNumeric(typeAnt) && type != typeAnt) {
+                        throw new SemanticError("Invalid type operators at line " + current.line + "[Expected "+typeAnt+" got "+type);
+                    }else {
                         throw new SemanticError("Invalid type operators at line " + current.line + "[Expected numeric values");
                     }
                 } else if (tagAux == Tag.MENOS || tagAux == Tag.OR){
@@ -335,16 +337,18 @@ public class Sintaxer {
     
     private int recursive_term(int typeAnt) throws SintaticError, SemanticError{
         int type = typeAnt;
+        boolean mark = false;
         switch(current.tag){
             case Tag.MULT, Tag.DIV, Tag.AND:
                 int tagAux = current.tag;
                 mulop();
                 type = factor_a();
-                if(type == typeAnt){
+                if(type == typeAnt && !(tagAux == Tag.DIV && type == Tag.INT && typeAnt == Tag.INT)){
                     recursive_term(type);
                     break;
                 } else if (tagAux == Tag.DIV && type == Tag.INT && typeAnt == Tag.INT){
-                    type = Tag.FLOAT;
+                    //type = Tag.FLOAT;
+                    mark = true;
                     recursive_term(type);
                     break;
                 } else if (!Utils.typeNumeric(typeAnt) || !Utils.typeNumeric(type)){
@@ -353,6 +357,9 @@ public class Sintaxer {
                 else {
                     throw new SemanticError("Invalid type operators at line " + current.line + "[Expected "+typeAnt+" got "+type);
                 }
+        }
+        if(mark == true){
+            return Tag.FLOAT;
         }
         return type;
     }
@@ -373,9 +380,12 @@ public class Sintaxer {
         switch(current.tag){
             case Tag.ID:
                 type = words.get(((Word)current).lexema).type;
+                if(type == 0) {
+                    throw new SemanticError("Identifier ["+current.toString() +"] not declared at line " + current.line);
+                }
                 getNextToken(Tag.ID);
                 break;
-            case Tag.INT, Tag.FLOAT, Tag.STRING, Tag.LITERAL:
+            case Tag.INT, Tag.FLOAT, Tag.STRING, Tag.LITERAL, Tag.REAL_CONSTANT:
                 type = constant();
                 break;
             case Tag.PARABRE:
@@ -465,8 +475,8 @@ public class Sintaxer {
                 getNextToken(Tag.LITERAL);
                 break;
             case Tag.REAL_CONSTANT:
-                current.type = Tag.REAL_CONSTANT;
-                type = Tag.REAL_CONSTANT;
+                current.type = Tag.FLOAT;
+                type = Tag.FLOAT;
                 getNextToken(Tag.REAL_CONSTANT);
                 break;
             default:

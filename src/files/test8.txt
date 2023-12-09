@@ -6,10 +6,10 @@ string texto;
         texto = "o valor de " + b + "é menor que " + a;
     } else {
         texto = "o valor dessaporra " + b + "é maior que " + a;
-    }
+    };
     do {
-        c = 1;
-    } while (2 != 1)
+        c = 2;
+    } while (2 != 1);
     write(texto);
 }
 

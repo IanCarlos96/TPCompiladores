@@ -284,7 +284,7 @@ public class Lexer {
             }
 
             float aux = 10;
-            float float_value = 0;
+            float float_value = (float)value;
             while (true) {
                 readch();
                 if (!Character.isDigit(ch)) {

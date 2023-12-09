@@ -13,12 +13,12 @@ public class Float extends Token {
     public final float value;
 
     public Float(float value) {
-        super(Tag.FLOAT);
+        super(Tag.REAL_CONSTANT);
         this.value = value;
     }
     
     public Float(float value, int line){
-        super(Tag.FLOAT, line);
+        super(Tag.REAL_CONSTANT, line);
         this.value = value;
     }
 

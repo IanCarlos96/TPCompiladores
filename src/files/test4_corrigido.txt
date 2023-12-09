@@ -1,7 +1,7 @@
 class Test4
 // Outro programa de teste
-    int idade, j, k, total;
-    string nome, texto;
+    int i, idade, j, k, total;
+    string nome, texto, sobrenome;
 {
     write("Digite o seu nome: ");
     read(nome);
@@ -13,7 +13,7 @@ class Test4
     j = i * 10;
     k = i * j / k;
     texto = nome + " " + sobrenome + ", os números gerados sao: ";
-    write (text);
+    write (texto);
     write(j);
     write(k);
 }

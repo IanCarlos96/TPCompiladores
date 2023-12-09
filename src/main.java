@@ -29,7 +29,8 @@ public class main {
         String filepath = "./src/files/";
         String filename = "";
         if(args.length == 0){
-            filename = "test8.txt";
+            //filename = "test5_corrigido.txt";
+            filename = "test7.txt";
         } else {
             filename = args[0];
         }
@@ -46,7 +47,7 @@ public class main {
             Hashtable<String, Word> words = Lexer.getWords();
             Sintaxer sintatic = new Sintaxer(token_list, words);
             sintatic.program();
-            System.out.println("Fim da análise sintática");
+            System.out.println("Fim da análise sintática e semântica");
             //Utils.printTabelaSimbolos(Lexer.top);
         }catch(Exception ex){
             System.out.println("["+ex.getMessage()+"]");

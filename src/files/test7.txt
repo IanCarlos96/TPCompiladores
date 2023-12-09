@@ -1,13 +1,20 @@
 class Test7
-int a, b;
+int a, b, c;
+string texto;
 {
-    write("Digite o primeiro número");
-    read(a);
-    write("Digite o segundo numero número");
-    read(b);
-    
-    c = a + b;
-    texto = "a soma dos números é "+c;
+    write("Digite o valor de a:");
+    read (a);
+    write("Digite o valor de c:");
+    read (c);
+
+    if(b < a){
+        texto = "o valor de " + b + "é menor que " + a;
+    } else {
+        texto = "o valor de  " + b + "é maior que " + a;
+    };
+    do {
+        c = 2;
+    } while (a != b);
     write(texto);
 }
 
