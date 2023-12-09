@@ -1,11 +1,12 @@
 class Test6
 int a, b, c;
+string texto;
 {
     write("Digite o primeiro número");
     read(a);
     write("Digite o segundo numero número");
     read(b);
-    
+    c = a + 1;
     c = (a + b) /2;
     texto = "a media dos números é "+c;
     write(texto);

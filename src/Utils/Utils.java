@@ -20,4 +20,25 @@ public class Utils {
         }
     
     }
+    
+    public static boolean typeNumeric(int type){
+    
+        switch(type){
+            case Tag.INT:
+            case Tag.INTEGER_CONSTANT:
+            case Tag.FLOAT:
+            case Tag.REAL_CONSTANT:
+                return true;
+        }
+        return false;
+    }
+    
+    public static boolean typeString(int type){
+        switch(type){
+            case Tag.STRING:
+            case Tag.LITERAL:
+                return true;
+        }
+        return false;
+    }
 }

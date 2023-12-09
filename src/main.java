@@ -29,7 +29,7 @@ public class main {
         String filepath = "./src/files/";
         String filename = "";
         if(args.length == 0){
-            filename = "test6.txt";
+            filename = "test8.txt";
         } else {
             filename = args[0];
         }

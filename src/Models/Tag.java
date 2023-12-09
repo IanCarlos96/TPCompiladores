@@ -63,7 +63,9 @@ public class Tag {
             
         INTEGER_CONSTANT = 286,
         LITERAL = 287,
-        REAL_CONSTANT = 300;
+        REAL_CONSTANT = 300,
+    
+        ERROR = -99;
             
         
             

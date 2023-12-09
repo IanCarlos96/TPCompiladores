@@ -4,10 +4,12 @@
  */
 package Controllers;
 
+import Exceptions.SemanticError;
 import Exceptions.SintaticError;
 import Models.Tag;
 import Models.Token;
 import Models.Word;
+import Utils.Utils;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -47,7 +49,7 @@ public class Sintaxer {
     
     
     // program ::= class identifier [decl-list] body
-    public void program() throws SintaticError {
+    public void program() throws SintaticError, SemanticError {
         
         //Little gambiarra, já que o início do arquivo estava gerando um token em branco às vezes
         boolean finded = false;
@@ -97,6 +99,7 @@ public class Sintaxer {
     private ArrayList<Token> ident_list(int type) throws SintaticError {
         ArrayList<Token> identifiers = new ArrayList<Token> ();
         if (this.current.tag == Tag.ID){
+            this.current.type = type;
             identifiers.add(this.current);
         }
         getNextToken(Tag.ID);
@@ -104,6 +107,7 @@ public class Sintaxer {
         while (current.tag == Tag.VIRGULA) {
             getNextToken(Tag.VIRGULA);
             if (this.current.tag == Tag.ID) {
+                this.current.type = type;
                 identifiers.add(this.current);
             }
             getNextToken(Tag.ID);
@@ -129,14 +133,14 @@ public class Sintaxer {
     }
 
     // body ::= "{" stmt-list "}"
-    private void body() throws SintaticError {
+    private void body() throws SintaticError, SemanticError {
         getNextToken(Tag.CHAVEABRE);
         stmt_list();
         getNextToken(Tag.CHAVEFECHA);
     }
 
     // stmt-list ::= stmt ";" { stmt ";" }
-    private void stmt_list() throws SintaticError {
+    private void stmt_list() throws SintaticError, SemanticError {
         stmt();
         while (current.tag == Tag.PONTOVIRGULA) {
             getNextToken(Tag.PONTOVIRGULA);
@@ -145,7 +149,7 @@ public class Sintaxer {
     }
 
     // stmt ::= assign-stmt | if-stmt | do-stmt | read-stmt | write-stmt
-    private void stmt() throws SintaticError {
+    private void stmt() throws SintaticError, SemanticError {
         switch (current.tag) {
             case Tag.ID :
                 assign_stmt();
@@ -170,21 +174,31 @@ public class Sintaxer {
     }
 
     // assign-stmt ::= identifier "=" simple_expr
-    private void assign_stmt() throws SintaticError {
+    private void assign_stmt() throws SintaticError, SemanticError {
+        int typeId = words.get(((Word)current).lexema).type;
+        if(words.get(((Word)current).lexema) == null || words.get(((Word)current).lexema).type == 0){
+            throw new SemanticError("Identifier ["+current.toString() +"] not declared at line " + current.line);
+        }
         getNextToken(Tag.ID);
         getNextToken(Tag.ASSIGN);
-        simple_expr();
+        int typeExp = simple_expr();
+        if(typeId != typeExp){
+            throw new SemanticError("Invalid type operators at line " + current.line + "[Expected "+typeId+" got "+typeExp);
+        }
     }
 
     // if-stmt ::= if "(" condition ")" "{" stmt-list "}" [else "{" stmt-list "}"]
-    private void if_stmt() throws SintaticError {
+    private void if_stmt() throws SintaticError, SemanticError {
         getNextToken(Tag.IF);
         getNextToken(Tag.PARABRE);
-        condition();
+        int type = condition();
+        if(type != Tag.BOOL){
+            throw new SemanticError("Boolean expression required at line " + current.line);
+        }
         getNextToken(Tag.PARFECHA);
         getNextToken(Tag.CHAVEABRE);
         stmt_list();
-        getNextToken(Tag.CHAVEFECHA);
+        //getNextToken(Tag.CHAVEFECHA);
         if (current.tag == Tag.ELSE) {
             getNextToken(Tag.ELSE);
             getNextToken(Tag.CHAVEABRE);
@@ -194,12 +208,13 @@ public class Sintaxer {
     }
 
     // condition ::= expression
-    private void condition() throws SintaticError {
-        expression();
+    private int condition() throws SintaticError, SemanticError {
+        int type = expression();
+        return type;
     }
 
     // do-stmt ::= do "{" stmt-list "}" do-suffix
-    private void do_stmt() throws SintaticError {
+    private void do_stmt() throws SintaticError, SemanticError {
         getNextToken(Tag.DO);
         getNextToken(Tag.CHAVEABRE);
         stmt_list();
@@ -208,23 +223,29 @@ public class Sintaxer {
     }
 
     // do-suffix ::= while "(" condition ")"
-    private void do_suffix() throws SintaticError {
+    private void do_suffix() throws SintaticError, SemanticError {
         getNextToken(Tag.WHILE);
         getNextToken(Tag.PARABRE);
-        condition();
+        int type = condition();
+        if(type != Tag.BOOL){
+            throw new SemanticError("Boolean expression required at line " + current.line);
+        }
         getNextToken(Tag.PARFECHA);
     }
 
     // read-stmt ::= read "(" identifier ")"
-    private void read_stmt() throws SintaticError {
+    private void read_stmt() throws SintaticError, SemanticError {
         getNextToken(Tag.READ);
         getNextToken(Tag.PARABRE);
+        if(words.get(((Word)current).lexema) == null || words.get(((Word)current).lexema).type == 0){
+            throw new SemanticError("Identifier ["+current.toString() +"] not declared at line " + current.line);
+        }
         getNextToken(Tag.ID);
         getNextToken(Tag.PARFECHA);
     }
 
     // write-stmt ::= write "(" writable ")"
-    private void write_stmt() throws SintaticError {
+    private void write_stmt() throws SintaticError, SemanticError {
         getNextToken(Tag.WRITE);
         getNextToken(Tag.PARABRE);
         writable();
@@ -232,7 +253,7 @@ public class Sintaxer {
     }
 
     // writable ::=  simple-expr | literal
-    private void writable() throws SintaticError {
+    private void writable() throws SintaticError, SemanticError {
         if(current.tag == Tag.LITERAL){
             getNextToken(Tag.LITERAL);
         } else {
@@ -242,79 +263,130 @@ public class Sintaxer {
     }
 
     // expression ::= simple-expr | simple-expr relop simple-expr
-    private void expression() throws SintaticError {
-        simple_expr();
+    private int expression() throws SintaticError, SemanticError {
+        int type = simple_expr();
         switch (current.tag) {
             case Tag.EQ, Tag.GT, Tag.GE, Tag.LT, Tag.LE, Tag.NE:
                 relop();
-                simple_expr();
-                break;
+                int type2 = simple_expr();
+                if(type == type2){
+                    //caso simple-expr relop simple-expr
+                    return Tag.BOOL;
+                } else {
+                    throw new SemanticError("Invalid type operators at line " + current.line + "[Expected "+type+" got "+type2);
+                }
             default: 
-            //    throw new SintaticError(this.current + " is an Invalid Expression Operator" + " at line "+this.current.line);
+            //nothing
         }
+        //caso simple-expr
+        return type;
     }
 
     // simple-expr ::= term | simple-expr addop term
-    private void simple_expr() throws SintaticError {
-        term();
-        recursive_simple_expr();
+    private int simple_expr() throws SintaticError, SemanticError {
+        int type = term();
+        type = recursive_simple_expr(type);
+        return type;
     }
     
-    private void recursive_simple_expr() throws SintaticError {
+    private int recursive_simple_expr(int typeAnt) throws SintaticError, SemanticError {
+        int type = typeAnt;
         switch (current.tag) {
             case Tag.MAIS, Tag.MENOS, Tag.OR:
+                int tagAux = current.tag;
                 addop();
-                term();
-                recursive_simple_expr();
-                break;
+                type = term();
+//                if(type == typeAnt) {
+//                    recursive_simple_expr(type);
+//                    break;
+//                } else if(tagAux == Tag.MAIS){
+                if(tagAux == Tag.MAIS){
+                    if(Utils.typeString(typeAnt) || Utils.typeString(type)){
+                        type = Tag.STRING;
+                        type = recursive_simple_expr(type);
+                    } else if (Utils.typeNumeric(type) && Utils.typeNumeric(typeAnt) && type == typeAnt){
+                        type = recursive_simple_expr(type);
+                        break;
+                    } else {
+                        throw new SemanticError("Invalid type operators at line " + current.line + "[Expected numeric values");
+                    }
+                } else if (tagAux == Tag.MENOS || tagAux == Tag.OR){
+                    if((!Utils.typeNumeric(typeAnt) || !Utils.typeNumeric(type)) || type != typeAnt ){
+                        throw new SemanticError("Invalid type operators at line " + current.line + "[Expected numeric values");
+                    } else {
+                        type = recursive_simple_expr(type);
+                        break;
+                    }
+                }
+                else {
+                    throw new SemanticError("Invalid type operators at line " + current.line + "[Expected "+typeAnt+" got "+type);
+                }
         }
+        return type;
     }
 
     // term ::= factor-a | term mulop factor-a
-    private void term() throws SintaticError {
-        factor_a();
-        recursive_term();
-//        while (current.tag == Tag.AND) {
-//            mulop();
-//            factor_a();
-//        }
+    private int term() throws SintaticError, SemanticError {
+        int type = factor_a();
+        type = recursive_term(type);
+
+        return type;
     }
     
-    private void recursive_term() throws SintaticError{
+    private int recursive_term(int typeAnt) throws SintaticError, SemanticError{
+        int type = typeAnt;
         switch(current.tag){
             case Tag.MULT, Tag.DIV, Tag.AND:
+                int tagAux = current.tag;
                 mulop();
-                factor_a();
-                recursive_term();
-                break;
+                type = factor_a();
+                if(type == typeAnt){
+                    recursive_term(type);
+                    break;
+                } else if (tagAux == Tag.DIV && type == Tag.INT && typeAnt == Tag.INT){
+                    type = Tag.FLOAT;
+                    recursive_term(type);
+                    break;
+                } else if (!Utils.typeNumeric(typeAnt) || !Utils.typeNumeric(type)){
+                    throw new SemanticError("Invalid type operators at line " + current.line + "[Expected numeric values");
+                } 
+                else {
+                    throw new SemanticError("Invalid type operators at line " + current.line + "[Expected "+typeAnt+" got "+type);
+                }
         }
+        return type;
     }
 
     // factor-a ::= factor | "!" factor | "-" factor
-    private void factor_a() throws SintaticError {
+    private int factor_a() throws SintaticError, SemanticError {
+        int type = Tag.ERROR;
         if (current.tag == Tag.NOT || current.tag == Tag.MENOS) {
             getNextToken(current.tag);
         }
-        factor();
+        type = factor();
+        return type;
     }
 
     // factor ::= identifier | constant | literal | "(" expression ")"
-    private void factor() throws SintaticError {
+    private int factor() throws SintaticError, SemanticError {
+        int type = Tag.ERROR;
         switch(current.tag){
             case Tag.ID:
+                type = words.get(((Word)current).lexema).type;
                 getNextToken(Tag.ID);
                 break;
             case Tag.INT, Tag.FLOAT, Tag.STRING, Tag.LITERAL:
-                constant();
+                type = constant();
                 break;
             case Tag.PARABRE:
                 getNextToken(Tag.PARABRE);
-                expression();
+                type = expression();
                 getNextToken(Tag.PARFECHA);
                 break;
             default: 
                 throw new SintaticError(this.current + " is an Invalid Factor" + " at line "+this.current.line);
         }
+        return type;
     }
 
     // relop ::= ">" | ">=" | "<" | "<=" | "!=" | "=="
@@ -378,21 +450,29 @@ public class Sintaxer {
     }
 
     // constant ::= integer_const | literal | real_const
-    private void constant() throws SintaticError {
+    private int constant() throws SintaticError {
         // Implemente a lógica para verificar e consumir constantes.
+        int type = Tag.ERROR;
         switch (current.tag) {
             case Tag.INTEGER_CONSTANT, Tag.INT:
+                current.type = Tag.INT;
+                type = Tag.INT;
                 getNextToken(Tag.INT);
                 break;
             case Tag.LITERAL:
+                current.type = Tag.LITERAL;
+                type = Tag.LITERAL;
                 getNextToken(Tag.LITERAL);
                 break;
             case Tag.REAL_CONSTANT:
+                current.type = Tag.REAL_CONSTANT;
+                type = Tag.REAL_CONSTANT;
                 getNextToken(Tag.REAL_CONSTANT);
                 break;
             default:
                 throw new SintaticError(this.current + " is an Invalid Constant");
         }
+        return type;
     }
 
 }

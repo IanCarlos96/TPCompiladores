@@ -12,6 +12,7 @@ public class Token {
     
     public final int tag;
     public int line;
+    public int type;
 
     public Token(int tag) {
         this.tag = tag;
@@ -20,6 +21,12 @@ public class Token {
     public Token(int tag, int line) {
         this.tag = tag;
         this.line = line;
+    }
+
+    public Token(int tag, int line, int type) {
+        this.tag = tag;
+        this.line = line;
+        this.type = type;
     }
 
     @Override

@@ -1,0 +1,15 @@
+class Test8
+int a, b, c;
+string texto;
+{
+    if(1 < 2){
+        texto = "o valor de " + b + "é menor que " + a;
+    } else {
+        texto = "o valor dessaporra " + b + "é maior que " + a;
+    }
+    do {
+        c = 1;
+    } while (2 != 1)
+    write(texto);
+}
+
