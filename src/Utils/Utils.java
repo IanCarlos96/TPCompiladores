@@ -14,6 +14,11 @@ import java.util.Map;
  * @author Ian Silva
  */
 public class Utils {
+    
+    public static final int sizeInt = 4;
+    public static final int sizeFloat = 8;
+    public static final int sizeString = 100;
+    
     public static void printTabelaSimbolos(Env top){
         for(Object entry: top.getTable().entrySet()){
             System.out.println(entry.toString());

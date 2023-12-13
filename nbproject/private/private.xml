@@ -4,22 +4,20 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Models/Word.java</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test5.txt</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test3.txt</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test1.txt</file>
+            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test4_corrigido.txt</file>
+            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test5_corrigido.txt</file>
+            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test6.txt</file>
+            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test8.txt</file>
             <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Controllers/Sintaxer.java</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Models/Num.java</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test4.txt</file>
+            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Utils/Temp.java</file>
             <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Models/Tag.java</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test2_corrigido.txt</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test2.txt</file>
+            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Models/Float.java</file>
             <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test1_corrigido.txt</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test1_v2.txt</file>
             <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/main.java</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Models/Token.java</file>
+            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test7.txt</file>
             <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/files/test3_corrigido.txt</file>
+            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Models/Token.java</file>
             <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Controllers/Lexer.java</file>
-            <file>file:/C:/Users/Ian%20Silva/Documents/NetBeansProjects/TPCompiladores/src/Utils/Utils.java</file>
         </group>
     </open-files>
 </project-private>

@@ -23,6 +23,8 @@ public class Sintaxer {
     private Token current;
     private int tokenIndex = 0;
     Hashtable<String, Word> words;
+    
+    private int offset;
 
     public Sintaxer(ArrayList<Token> tokenList, Hashtable<String, Word> words) {
         this.tokenList = tokenList;
@@ -50,7 +52,8 @@ public class Sintaxer {
     
     // program ::= class identifier [decl-list] body
     public void program() throws SintaticError, SemanticError {
-        
+        //Inicia o offset como 0, para geração de código
+        this.offset = 0;
         //Little gambiarra, já que o início do arquivo estava gerando um token em branco às vezes
         boolean finded = false;
         for(int index = 0; index < this.tokenList.size() && finded == false; index++){
@@ -382,6 +385,19 @@ public class Sintaxer {
                 type = words.get(((Word)current).lexema).type;
                 if(type == 0) {
                     throw new SemanticError("Identifier ["+current.toString() +"] not declared at line " + current.line);
+                } else{
+                    current.offset = this.offset;
+                    switch(type){
+                        case Tag.INT:
+                            this.offset += Utils.sizeInt;
+                            break;
+                        case Tag.FLOAT:
+                            this.offset += Utils.sizeFloat;
+                            break;
+                        case Tag.STRING:
+                            this.offset += Utils.sizeString;
+                            break;
+                    }
                 }
                 getNextToken(Tag.ID);
                 break;
@@ -467,16 +483,31 @@ public class Sintaxer {
             case Tag.INTEGER_CONSTANT, Tag.INT:
                 current.type = Tag.INT;
                 type = Tag.INT;
+                
+                //offset p/ geração de código
+                current.offset = this.offset;
+                this.offset += Utils.sizeInt;
+                
                 getNextToken(Tag.INT);
                 break;
             case Tag.LITERAL:
                 current.type = Tag.LITERAL;
                 type = Tag.LITERAL;
+                
+                //offset p/ geração de código
+                current.offset = this.offset;
+                this.offset+= Utils.sizeString;
+                
                 getNextToken(Tag.LITERAL);
                 break;
             case Tag.REAL_CONSTANT:
                 current.type = Tag.FLOAT;
                 type = Tag.FLOAT;
+                
+                //offset p/ geração de código
+                current.offset = this.offset;
+                this.offset+= Utils.sizeFloat;
+                
                 getNextToken(Tag.REAL_CONSTANT);
                 break;
             default:
